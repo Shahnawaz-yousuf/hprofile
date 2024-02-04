@@ -49,13 +49,14 @@ jobs:
          SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
 
   BUILD_AND_PUBLISH: 
+    needs: Testing
     runs-on: ubuntu-latest
     steps: 
       - name: Code Checkout 
         uses: actions/checkout@v4
 
       - name: update application.properties file
-        run: |
+        run:  |
           sed -i "s/^jdbc.username.*$/jdbc.username\=${{ secrets.RDS_USER }}/" src/main/resources/application.properties
           sed -i "s/^jdbc.username.*$/jdbc.username\=${{ secrets.RDS_PASS }}/" src/main/resources/application.properties
           sed -i "s/db01/${{ secrets.RDS_ENDPOINT }}/" src/main/resources/application.properties
@@ -67,10 +68,10 @@ jobs:
           secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           registry: ${{ secrets.REGISTRY }}
           repo: actapp
-          region: ${{ env.AWS_REGION }}
+          region: ap-south-1
           auto_tag: latest,${{github.run_number}}
           daemon_off: false
-          dockerfile: ./Dockerfile
+          dockerfile: ./Dockerfile 
           context: ./ 
 
 
